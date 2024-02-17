@@ -1,9 +1,17 @@
 [tool.poetry]
 name = "validate-sops"
-version = "0.1.0"
+version = "0.1.1"
 description = "A Python utility to ensure your files are securely encrypted with SOPS. Integrates seamlessly into your pre-commit workflow, providing automated validation for SOPS-encrypted files, enhancing security and compliance in your development process."
 authors = ["Vladimir Zhukov"]
+license = "MIT"
 readme = "README.md"
+homepage = "https://github.com/voldy/validate-sops"
+repository = "https://github.com/voldy/validate-sops"
+keywords = ["sops", "pre-commit", "hook"]
+
+include = [
+    "LICENSE",
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -13,6 +21,9 @@ python = "^3.11"
 pytest = "^8.0.1"
 pylint = "^3.0.3"
 pre-commit = "^3.6.1"
+
+[tool.poetry.scripts]
+validate-sops = 'validate_sops:validate_files'
 
 [build-system]
 requires = ["poetry-core"]

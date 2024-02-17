@@ -1,5 +1,5 @@
 """
-validate_sops.py
+validate_files.py
 
 This module provides functionality to validate whether given files are encrypted with SOPS.
 It checks for the presence of 'sops_version' in each file to determine if it is encrypted with SOPS.
@@ -47,7 +47,3 @@ def validate_files(files):
             sys.exit(1)
 
     print("All files are valid and encrypted with SOPS.")
-
-
-if __name__ == "__main__":
-    validate_files(sys.argv[1:])

@@ -5,7 +5,7 @@ This module contains tests for the validate_sops.py script. It includes tests to
 script accurately identifies files encrypted with SOPS by checking for the presence of 'sops_version' in the file.
 """
 
-from validate_sops.validate_sops import is_sops_encrypted
+from validate_sops.main import is_sops_encrypted
 import os
 
 

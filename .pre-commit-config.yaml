@@ -22,6 +22,6 @@ repos:
     hooks:
     -   id: validate-sops
         name: Validate SOPS Encryption
-        entry: poetry run python validate_sops/validate_sops.py
+        entry: poetry run python validate_sops
         language: system
         files: '.*\/secrets\/encrypted\.(yaml|yml|json|env)$'

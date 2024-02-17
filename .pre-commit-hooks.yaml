@@ -1,5 +1,6 @@
 -   id: validate-sops
     name: Validate SOPS
     description: This hook validates that files are encrypted with SOPS.
-    entry: python validate_sops/validate_sops.py
-    language: system
+    entry: validate-sops
+    language: python
+    files: '.*secrets.*.(yaml|yml|json|env)$'
