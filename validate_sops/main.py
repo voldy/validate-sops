@@ -34,14 +34,18 @@ def is_sops_encrypted(file_path):
         return False
 
 
-def validate_files(files):
+def validate_files(files=None):
     """
     Validate a list of files to check if they are encrypted with SOPS.
 
     Parameters:
         files (list of str): A list of file paths to validate.
     """
+    if files is None:
+        sys.exit(0)
+
     for file_path in files:
+        print(f"Processing file: {file_path}")
         if not is_sops_encrypted(file_path):
             print(f"🤬🤬🤬 The file {file_path} is not encrypted with SOPS.")
             sys.exit(1)

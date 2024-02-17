@@ -17,7 +17,7 @@ To use `validate-sops` as a [pre-commit](https://pre-commit.com/) hook in your p
 ```yaml
 repos:
 -  repo: https://github.com/voldy/validate-sops
-    rev: 'v0.1.1'  # Use the latest commit SHA or tag
+    rev: 'v0.1.0'  # Use the latest commit SHA or tag
     hooks:
     -   id: validate-sops
         files: '.*\/secrets\/encrypted\.(yaml|yml|json|env)$' # Adjust based on your file(s) location and type(s)

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "validate-sops"
-version = "0.1.1"
+version = "0.1.0"
 description = "A Python utility to ensure your files are securely encrypted with SOPS. Integrates seamlessly into your pre-commit workflow, providing automated validation for SOPS-encrypted files, enhancing security and compliance in your development process."
 authors = ["Vladimir Zhukov"]
 license = "MIT"
