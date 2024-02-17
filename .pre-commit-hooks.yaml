@@ -2,4 +2,4 @@
     name: Validate SOPS
     description: This hook validates that files are encrypted with SOPS.
     entry: python validate_sops/validate_sops.py
-    language: python
+    language: system
