@@ -51,5 +51,3 @@ def main():
         if not is_sops_encrypted(file_path):
             print(f"🤬🤬🤬 The file {file_path} is not encrypted with SOPS.")
             sys.exit(1)
-
-    print("All files are valid and encrypted with SOPS.")
