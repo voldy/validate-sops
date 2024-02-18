@@ -2,12 +2,7 @@
 
 All notable changes to the "validate-sops" project will be documented in this file. This project adheres to [Semantic Versioning](https://semver.org/).
 
-## [0.1.1] - 2024-02-17
-
-### Added
-- pre-commit hook manifest file.
-
-## [0.1.0] - 2024-02-17
+## [0.1.0] - 2024-02-18
 
 ### Added
 - Initial release of the `validate-sops` utility to validate files encrypted with SOPS.

@@ -1,5 +1,5 @@
 """
-validate_files.py
+main.py
 
 This module provides functionality to validate whether given files are encrypted with SOPS.
 It checks for the presence of 'sops_version' in each file to determine if it is encrypted with SOPS.
@@ -7,6 +7,7 @@ It checks for the presence of 'sops_version' in each file to determine if it is 
 Author: Vladimir Zhukov
 """
 
+from argparse import ArgumentParser
 import sys
 
 
@@ -34,18 +35,19 @@ def is_sops_encrypted(file_path):
         return False
 
 
-def validate_files(files=None):
+def main():
     """
     Validate a list of files to check if they are encrypted with SOPS.
 
     Parameters:
         files (list of str): A list of file paths to validate.
     """
-    if files is None:
-        sys.exit(0)
+    argparser = ArgumentParser()
+    argparser.add_argument("filenames", nargs="+")
 
-    for file_path in files:
-        print(f"Processing file: {file_path}")
+    args = argparser.parse_args()
+
+    for file_path in args.filenames:
         if not is_sops_encrypted(file_path):
             print(f"🤬🤬🤬 The file {file_path} is not encrypted with SOPS.")
             sys.exit(1)

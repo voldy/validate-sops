@@ -3,10 +3,8 @@
 This is the main module for the package.
 """
 
-import sys
-
-from validate_sops.main import validate_files
+from validate_sops.main import main
 
 
 if __name__ == "__main__":
-    validate_files(sys.argv[1:])
+    main()
