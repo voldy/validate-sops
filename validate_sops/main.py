@@ -38,9 +38,6 @@ def is_sops_encrypted(file_path):
 def main():
     """
     Validate a list of files to check if they are encrypted with SOPS.
-
-    Parameters:
-        files (list of str): A list of file paths to validate.
     """
     argparser = ArgumentParser()
     argparser.add_argument("filenames", nargs="+")
