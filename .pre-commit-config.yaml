@@ -17,11 +17,3 @@ repos:
     rev: 24.2.0
     hooks:
     -   id: black
-
--   repo: local
-    hooks:
-    -   id: validate-sops
-        name: Validate SOPS Encryption
-        entry: validate-sops
-        language: python
-        files: '.*\/secrets\/encrypted\.(yaml|yml|json|env)$'

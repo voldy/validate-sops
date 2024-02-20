@@ -2,7 +2,15 @@
 
 ## Overview
 
-`validate-sops` is a Python utility designed by Vladimir Zhukov to validate that specified files are encrypted using [Mozilla SOPS (Secrets OPerationS)](https://github.com/mozilla/sops). It ensures that sensitive files committed to your repository are securely encrypted, preventing accidental exposure of secrets.
+`validate-sops` is a Python utility designed to validate that specified files are encrypted using [Mozilla SOPS (Secrets OPerationS)](https://github.com/mozilla/sops). It ensures that sensitive files committed to your repository are securely encrypted, preventing accidental exposure of secrets.
+
+## Supported Formats
+
+The utility supports validation for files in the following formats:
+
+- JSON (.json)
+- YAML (.yaml and .yml)
+- Environment files (.env)
 
 ## Features
 
@@ -17,11 +25,14 @@ To use `validate-sops` as a [pre-commit](https://pre-commit.com/) hook in your p
 ```yaml
 repos:
 -  repo: https://github.com/voldy/validate-sops
-    rev: 'v0.1.0'  # Use the latest commit SHA or tag
+    rev: 'v0.1.1'  # Use the latest commit SHA or tag
     hooks:
     -   id: validate-sops
-        files: '.*\/secrets\/encrypted\.(yaml|yml|json|env)$' # Adjust based on your file(s) location and type(s)
+        # Adjust based on your file(s) location and type(s)
+        files: '.*\/secrets\/encrypted\.(yaml|yml|json|env)$'
 ```
+
+Ensure that the file paths and types specified in the files regex pattern match the location and formats of the files you intend to validate in your project.
 
 ## Local Development Setup
 
@@ -65,9 +76,25 @@ This step is useful for testing the hooks before committing.
 
 To run the unit tests for `validate-sops`, use the following command:
 
-   ```bash
-   poetry run pytest
-   ```
+```bash
+poetry run pytest
+```
+
+### Testing Changes Locally in Another Project
+If you're making changes to `validate-sops` and want to test these changes within the context of another project that uses `validate-sops` as a pre-commit hook, you can leverage the `pre-commit try-repo` command. This allows you to run your locally modified version of `validate-sops` directly in the consuming project without needing to commit or push your changes.
+
+Here's how you can test your local changes to `validate-sops` in another project:
+
+1. Navigate to the root directory of the project where `validate-sops` is integrated as a pre-commit hook.
+2. Run the following command:
+
+```bash
+pre-commit try-repo /local/path/to/validate-sops validate-sops --verbose --all-files
+```
+
+Replace `/local/path/to/validate-sops` with the actual path to your local clone of the validate-sops repository.
+
+**Note**: The `try-repo` command allows you to temporarily include your local version of `validate-sops` in the pre-commit configuration of the consuming project. This enables you to test uncommitted changes in `validate-sops` directly, making it easier to iterate on your development before finalizing your changes.
 
 ## Contributing
 
