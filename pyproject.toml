@@ -9,12 +9,10 @@ homepage = "https://github.com/voldy/validate-sops"
 repository = "https://github.com/voldy/validate-sops"
 keywords = ["sops", "pre-commit", "hook"]
 
-include = [
-    "LICENSE",
-]
+include = ["LICENSE"]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 pyyaml = "^6.0.1"
 
 
