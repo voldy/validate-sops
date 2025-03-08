@@ -76,7 +76,7 @@ def test_non_existent_file():
     """Ensure a missing file returns False and logs an error."""
     with patch("validate_sops.main.logging.error") as mock_log:
         assert not is_sops_encrypted("missing.json")
-        mock_log.assert_called_with("File not found: missing.json")
+        mock_log.assert_called_with("File not found: %s", "missing.json")
 
 
 def test_permission_denied():
@@ -84,7 +84,7 @@ def test_permission_denied():
     with patch("builtins.open", side_effect=PermissionError):
         with patch("validate_sops.main.logging.error") as mock_log:
             assert not is_sops_encrypted("restricted.json")
-            mock_log.assert_called_with("Permission denied: restricted.json")
+            mock_log.assert_called_with("Permission denied: %s", "restricted.json")
 
 
 def test_unreadable_file():
@@ -95,7 +95,7 @@ def test_unreadable_file():
     ):
         with patch("validate_sops.main.logging.error") as mock_log:
             assert not is_sops_encrypted("corrupt.json")
-            mock_log.assert_called_with("Unable to decode file: corrupt.json")
+            mock_log.assert_called_with("Unable to decode file: %s", "corrupt.json")
 
 
 @pytest.mark.parametrize(
