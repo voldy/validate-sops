@@ -4,8 +4,9 @@ validate_sops.py
 A pre-commit hook to validate whether given files are encrypted with SOPS.
 It checks for the presence of 'sops_version' in each file.
 
-Author: Vladimir Zhukov
-Author: Bertrand Lanson
+Authors:
+    - Vladimir Zhukov
+    - Bertrand Lanson
 """
 
 import json
