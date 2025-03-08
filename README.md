@@ -58,7 +58,7 @@ poetry install
 ```
 
 3. Set up the pre-commit hooks:
-After configuring `.pre-commit-config.yaml` in your project, run the following command to set up the git hook scripts:
+   After configuring `.pre-commit-config.yaml` in your project, run the following command to set up the git hook scripts:
 
 ```bash
 pre-commit install
@@ -81,6 +81,7 @@ poetry run pytest
 ```
 
 ### Testing Changes Locally in Another Project
+
 If you're making changes to `validate-sops` and want to test these changes within the context of another project that uses `validate-sops` as a pre-commit hook, you can leverage the `pre-commit try-repo` command. This allows you to run your locally modified version of `validate-sops` directly in the consuming project without needing to commit or push your changes.
 
 Here's how you can test your local changes to `validate-sops` in another project:
@@ -102,7 +103,8 @@ Contributions to `validate-sops` are welcome! Please feel free to submit pull re
 
 ## Author
 
-Vladimir Zhukov
+- Vladimir Zhukov
+- Bertrand Lanson <bertrand.lanson@protonmail.com>
 
 ## License
 
