@@ -1,0 +1,74 @@
+---
+name: pull-requests-open
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+    branches:
+      - main
+
+env:
+  IMAGE_NAME: ${{ gitea.repository }}
+  BUILD_PLATFORMS: linux/amd64
+
+jobs:
+  commit-history-check:
+    name: Check commit compliance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Install commitizen
+        run: pip3 install commitizen
+        shell: bash
+        working-directory: ${{ github.workspace }}
+
+      - run: git log origin/${{ github.event.pull_request.base.ref }}..
+
+      - name: Verify commit message compliance
+        run: |
+          echo "cz check --rev-range origin/${{ gitea.event.pull_request.base.ref }}.."
+          cz check --rev-range origin/${{ gitea.event.pull_request.base.ref }}..
+        shell: bash
+        working-directory: ${{ github.workspace }}
+
+  tests:
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          virtualenvs-path: ${{ github.workspace }}/.env
+          installer-parallel: true
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root
+        shell: bash
+        working-directory: ${{ github.workspace }}
+
+      - name: Install project
+        run: poetry install --no-interaction
+        shell: bash
+        working-directory: ${{ github.workspace }}
+
+      - name: Run unit tests
+        run: poetry run coverage run -m pytest -v -s
+        shell: bash
+        working-directory: ${{ github.workspace }}
+
+      - name: Run coverage report
+        run: poetry run coverage report -m --fail-under=75
+        shell: bash
+        working-directory: ${{ github.workspace }}
