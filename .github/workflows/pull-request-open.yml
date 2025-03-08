@@ -63,6 +63,8 @@ jobs:
         run: poetry run coverage run -m pytest -v -s
         shell: bash
         working-directory: ${{ github.workspace }}
+        env:
+          PYTEST_ADDOPTS: "--color=yes"
 
       - name: Run coverage report
         run: poetry run coverage report -m --fail-under=75
