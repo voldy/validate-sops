@@ -35,3 +35,13 @@ pre-commit = "^3.6.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+version_provider = "poetry"
+tag_format = "v$version"
+update_changelog_on_bump = true
+version_files = [
+  "pyproject.toml:^version",
+]
