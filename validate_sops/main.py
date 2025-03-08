@@ -1,108 +1,90 @@
 """
-main.py
+validate_sops.py
 
-This module provides functionality to validate whether given files are encrypted with SOPS.
-It checks for the presence of 'sops_version' in each file to determine if it is encrypted with SOPS.
+A pre-commit hook to validate whether given files are encrypted with SOPS.
+It checks for the presence of 'sops_version' in each file.
 
 Author: Vladimir Zhukov
+Author: Bertrand Lanson
 """
 
-from argparse import ArgumentParser
-import sys
 import json
-import os
 import yaml
+import os
+import sys
+import logging
+from argparse import ArgumentParser
+
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 
 def is_sops_encrypted_json_or_yaml(data):
-    """
-    Check if JSON or YAML data is encrypted with SOPS by looking for 'sops' key
-    and specifically the 'version' attribute within 'sops'.
-
-    Parameters:
-        data (dict): Parsed JSON or YAML data.
-
-    Returns:
-        bool: True if the data contains 'sops' key with a 'version' attribute, False otherwise.
-    """
-    return "sops" in data and "version" in data["sops"]
+    """Check if parsed JSON/YAML contains SOPS metadata."""
+    return isinstance(data, dict) and "sops" in data and "version" in data["sops"]
 
 
 def is_sops_encrypted_env(content):
-    """
-    Check if .env file content is encrypted with SOPS by looking for a line defining the 'sops_version' variable,
-    starting from the bottom of the file since this variable is likely to be at the end.
+    """Check if .env file contains 'sops_version' definition."""
+    return any(
+        line.strip().startswith("sops_version=")
+        for line in reversed(content.splitlines())
+    )
 
-    Parameters:
-        content (str): Content of the .env file.
 
-    Returns:
-        bool: True if a 'sops_version' variable is defined in the content, False otherwise.
-    """
-    # Split the content into lines, reverse the list, and iterate through each line from the bottom up
-    for line in reversed(content.splitlines()):
-        # Strip leading and trailing whitespace from the line
-        stripped_line = line.strip()
-        # Check if the line defines the 'sops_version' variable
-        if stripped_line.startswith("sops_version="):
-            return True
-    return False
+def read_file(file_path):
+    """Read a file's content safely."""
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            return file.read()
+    except FileNotFoundError:
+        logging.error(f"File not found: {file_path}")
+    except PermissionError:
+        logging.error(f"Permission denied: {file_path}")
+    except UnicodeDecodeError:
+        logging.error(f"Unable to decode file: {file_path}")
+    except Exception as e:
+        logging.error(f"Unexpected error reading {file_path}: {e}")
+    return None
 
 
 def is_sops_encrypted(file_path):
-    """
-    Check if the file is encrypted with SOPS by looking for 'sops' key with a 'version' attribute
-    in JSON/YAML files or 'sops_version' string in .env files.
+    """Check if a file is encrypted with SOPS."""
+    file_ext = os.path.splitext(file_path)[1].lower()
+    content = read_file(file_path)
 
-    Parameters:
-        file_path (str): The path to the file to check.
-
-    Returns:
-        bool: True if the file is encrypted with SOPS, False otherwise.
-    """
-    _, file_extension = os.path.splitext(file_path)
-
-    try:
-        with open(file_path, "r", encoding="utf-8") as file:
-            content = file.read()
-
-            if file_extension in [".json", ".yaml", ".yml"]:
-                # For JSON and YAML, parse and check for 'sops' key with 'version'
-                data = (
-                    json.loads(content)
-                    if file_extension == ".json"
-                    else yaml.safe_load(content)
-                )
-                return is_sops_encrypted_json_or_yaml(data)
-            elif file_extension in [".env"]:
-                # For .env files, read as plain text and check for 'sops_version'
-                return is_sops_encrypted_env(content)
-            else:
-                print(f"Unsupported file type: {file_extension}")
-                return False
-
-    except FileNotFoundError:
-        print(f"File not found: {file_path}")
+    if content is None:
         return False
-    except PermissionError:
-        print(f"Permission denied: {file_path}")
-        return False
-    except (IOError, json.JSONDecodeError, yaml.YAMLError) as e:
-        # Catch JSON or YAML parsing errors along with I/O errors
-        print(f"Error processing file {file_path}: {e}")
-        return False
+
+    parsers = {
+        ".json": lambda c: is_sops_encrypted_json_or_yaml(json.loads(c)),
+        ".yaml": lambda c: is_sops_encrypted_json_or_yaml(yaml.safe_load(c)),
+        ".yml": lambda c: is_sops_encrypted_json_or_yaml(yaml.safe_load(c)),
+        ".env": is_sops_encrypted_env,
+    }
+
+    if file_ext in parsers:
+        try:
+            return parsers[file_ext](content)
+        except (json.JSONDecodeError, yaml.YAMLError):
+            logging.error(f"Invalid {file_ext} syntax in {file_path}")
+        except Exception as e:
+            logging.error(f"Error processing {file_path}: {e}")
+    else:
+        logging.warning(f"Unsupported file type: {file_ext}")
+
+    return False
 
 
 def main():
-    """
-    Validate a list of files to check if they are encrypted with SOPS.
-    """
-    argparser = ArgumentParser()
-    argparser.add_argument("filenames", nargs="+")
+    """Main function to validate a list of files."""
+    parser = ArgumentParser(description="Check if files are encrypted with SOPS.")
+    parser.add_argument("filenames", nargs="+", help="Files to check")
 
-    args = argparser.parse_args()
+    args = parser.parse_args()
 
     for file_path in args.filenames:
         if not is_sops_encrypted(file_path):
-            print(f"🤬🤬🤬 The file {file_path} is not encrypted with SOPS.")
+            logging.error(f"❌ The file {file_path} is NOT encrypted with SOPS.")
             sys.exit(1)
+
+    logging.info("✅ All files are properly encrypted with SOPS.")
