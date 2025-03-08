@@ -37,13 +37,17 @@ def read_file(file_path):
         with open(file_path, "r", encoding="utf-8") as file:
             return file.read()
     except FileNotFoundError:
-        logging.error(f"File not found: {file_path}")
+        logging.error("File not found: %s", file_path)
     except PermissionError:
-        logging.error(f"Permission denied: {file_path}")
+        logging.error("Permission denied: %s", file_path)
     except UnicodeDecodeError:
-        logging.error(f"Unable to decode file: {file_path}")
-    except Exception as e:
-        logging.error(f"Unexpected error reading {file_path}: {e}")
+        logging.error("Unable to decode file: %s", file_path)
+    except json.JSONDecodeError:
+        logging.error("Invalid JSON syntax in %s", file_path)
+    except yaml.YAMLError:
+        logging.error("Invalid YAML syntax in %s", file_path)
+    except Exception as e:  # pylint: disable=broad-except
+        logging.error("Unexpected error reading %s: %s", file_path, e)
     return None
 
 
@@ -66,11 +70,11 @@ def is_sops_encrypted(file_path):
         try:
             return parsers[file_ext](content)
         except (json.JSONDecodeError, yaml.YAMLError):
-            logging.error(f"Invalid {file_ext} syntax in {file_path}")
-        except Exception as e:
-            logging.error(f"Error processing {file_path}: {e}")
+            logging.error("Invalid %s syntax in %s", file_ext, file_path)
+        except Exception as e:  # pylint: disable=broad-except
+            logging.error("Error processing %s: %s", file_path, e)
     else:
-        logging.warning(f"Unsupported file type: {file_ext}")
+        logging.warning("Unsupported file type: %s", file_path)
 
     return False
 
@@ -84,7 +88,7 @@ def main():
 
     for file_path in args.filenames:
         if not is_sops_encrypted(file_path):
-            logging.error(f"❌ The file {file_path} is NOT encrypted with SOPS.")
+            logging.error("❌ The file %s is NOT encrypted with SOPS.", file_path)
             sys.exit(1)
 
     logging.info("✅ All files are properly encrypted with SOPS.")
