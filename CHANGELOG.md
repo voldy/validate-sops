@@ -2,6 +2,11 @@
 
 All notable changes to the "validate-sops" project will be documented in this file. This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.1.2] - 2025-04-15
+
+### Changed
+- Updated dependencies: pip, virtualenv, and setuptools
+
 ## [0.1.1] - 2024-02-20
 
 ### Added
